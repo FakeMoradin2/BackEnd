@@ -2,7 +2,7 @@ import mysql from 'mysql2';
 import { useState } from 'react';
 
 export default async function handler(req, res){
-    const {method, body} = req;
+    const {method, body, query} = req;
     //configurar la conexion base de datos
     const connection = mysql.createConnection({
         host : 'localhost',
@@ -37,11 +37,26 @@ export default async function handler(req, res){
                 res.status(500).json({error: err});
             } else {
                 console.log(results);
-                res.status(200).json(results);
+                connection.end();
+                return res.status(200).json(results);
             }
         });
-    
-        connection.end();
         break;
+    case 'DELETE':
+        console.log(query);
+        connection.query(
+            'DELETE FROM libros WHERE PKid = ?',
+            [query.id],
+            function (err, results, fields) {
+                if(err){
+                    console.log(err);
+                    res.status(500).json({ error: err});
+                } else {
+                    console.log(results);
+                    connection.end();
+                    return res.status(200).json(results);
+                }
+            });
+            break;
     }
 }
