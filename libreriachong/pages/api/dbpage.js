@@ -5,10 +5,10 @@ export default async function handler(req, res) {
     const { method, body, query } = req;
 
     const connection = mysql.createConnection({
-    host: 'localhost',
+    host: process.env.MYSQL_HOST,
     port: 3306,
-    user: 'root',
-    password: 'Saltamontes1.',
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
     database: 'bibliotecacurso',
     });
 
