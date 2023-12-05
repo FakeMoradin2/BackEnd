@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 
-import 'tailwindcss/tailwind.css'; // Import Tailwind CSS
-
 export default function Testdb() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -13,8 +11,6 @@ export default function Testdb() {
     const [correo, setCorreo] = useState('');
     const [matricula, setMatricula] = useState('');
     const [edad, setEdad] = useState('');
-    const [updatingId, setUpdatingId] = useState(null);
-    const [editingData, setEditingData] = useState(null);
 
     useEffect(() => {
         getData();
@@ -53,58 +49,6 @@ export default function Testdb() {
             toast.error('Error al enviar datos');
         }
         setLoading(false);
-    };
-
-    const updateData = async () => {
-        setLoading(true);
-        if (!updatingId || nombre === '' || apellidos === '' || correo === '' || matricula === '' || edad === '') {
-            toast.error('Selecciona un elemento y llena todos los campos');
-            setLoading(false);
-            return;
-        }
-        try {
-            const response = await axios.put(`/api/testmongo?id=${updatingId}`, {
-                nombre: nombre,
-                apellidos: apellidos,
-                correo: correo,
-                matricula: matricula,
-                edad: edad,
-            });
-            if (response.status === 200) {
-                getData();
-                toast.success('Datos actualizados');
-                resetForm();
-            } else {
-                toast.error('Error al actualizar datos');
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error('Error al actualizar datos');
-        }
-        setLoading(false);
-        setUpdatingId(null);
-        setEditingData(null);
-    };
-
-    const eliminarData = async (id) => {
-        try {
-            await axios.delete(`/api/testmongo?id=${id}`);
-            getData();
-            toast.success('Datos eliminados');
-        } catch (error) {
-            console.error(error);
-            toast.error('No se pudo eliminar');
-        }
-    };
-
-    const editarData = (alumno) => {
-        setEditingData(alumno);
-        setUpdatingId(alumno._id); // Assuming the ID is stored in the '_id' field
-        setNombre(alumno.nombre);
-        setApellidos(alumno.apellidos);
-        setCorreo(alumno.correo);
-        setMatricula(alumno.matricula);
-        setEdad(alumno.edad);
     };
 
     const resetForm = () => {
@@ -158,23 +102,13 @@ export default function Testdb() {
             </div>
 
             <div className='flex justify-end p-4 space-x-4 bg-gray-200'>
-                {updatingId ? (
-                    <button
-                        className='px-4 py-2 bg-red-500 text-white rounded cursor-not-allowed'
-                        disabled={loading}
-                        onClick={updateData}
-                    >
-                        {loading ? 'Detener' : 'Actualizar'}
-                    </button>
-                ) : (
-                    <button
-                        className='px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600'
-                        disabled={loading}
-                        onClick={sendData}
-                    >
-                        {loading ? 'Detener' : 'Iniciar'}
-                    </button>
-                )}
+                <button
+                    className='px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600'
+                    disabled={loading}
+                    onClick={sendData}
+                >
+                    {loading ? 'Detener' : 'Iniciar'}
+                </button>
             </div>
 
             <main className='p-4 bg-gray-200'>
@@ -191,12 +125,6 @@ export default function Testdb() {
                                 onClick={() => eliminarData(alumno._id)}
                             >
                                 Eliminar
-                            </button>
-                            <button
-                                className='px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600'
-                                onClick={() => editarData(alumno)}
-                            >
-                                Editar
                             </button>
                         </div>
                     </div>
